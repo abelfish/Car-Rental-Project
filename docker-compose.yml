@@ -1,0 +1,50 @@
+# Use root/example as user/password credentials
+version: '3.1'
+name: car-rental-app
+services:
+  mongo:
+    container_name: mongo-db
+    image: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+
+    ports:
+      - 27017:27017
+
+  activemq:
+    image: rmohr/activemq:latest
+    container_name: activemq
+    restart: always
+    ports:
+      - 61616:61616
+      - 8161:8161
+    environment:
+      password: root
+      username: root
+  hsqldb:
+    image: mitchtalmadge/hsqldb
+    container_name: hsqldb
+    restart: always
+    ports:
+      - 9001:9001
+    environment:
+      HSQLDB_USER: sa
+      HSQLDB_PASSWORD: password
+      HSQLDB_DATABASE_NAME: car_rental
+      HSQLDB_DATABASE_ALIAS: car_rental
+      HSQLDB_DATABASE_HOST: hsqldb
+      HSQLDB_REMOTE: true
+      HSQLDB_TRACE: true
+      HSQLDB_SILENT: false
+
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    restart: always
+    ports:
+      - 9090:9090
+
+    volumes:
+        - ./prometheus:/etc/prometheus 
